@@ -1,0 +1,14 @@
+{
+  "name": "agroquimicos-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "http-server ./ -p 8080"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "jspdf": "^2.5.1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

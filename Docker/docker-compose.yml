@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=agrouser
+      - DB_PASSWORD=agropass
+      - DB_NAME=agroquimicos_db
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=agropass
+      - MYSQL_DATABASE=agroquimicos_db
+      - MYSQL_USER=agrouser
+      - MYSQL_PASSWORD=agropass
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  mysql-data:
