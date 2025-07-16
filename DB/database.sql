@@ -1,6 +1,3 @@
-/* app.listen(8080, () => console.log('Server running on port 8080'));
-    `,
-    "database.sql": ` */
 CREATE DATABASE agroquimicos_db;
 USE agroquimicos_db;
 
