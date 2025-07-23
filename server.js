@@ -3,6 +3,7 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path'); // Nueva línea: Importa el módulo 'path'
+const authRoutes = require('./Routes/authRoutes');
 
 const app = express();
 
