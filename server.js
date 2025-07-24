@@ -3,11 +3,10 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path'); // Nueva línea: Importa el módulo 'path'
-const authRoutes = require('./Routes/authRoutes');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
 const db = mysql.createPool({
@@ -17,6 +16,10 @@ const db = mysql.createPool({
     database: 'agroquimicos_db'
 });
 
+db.getConnection()
+    .then(() => console.log('Database connected successfully!'))
+    .catch(err => console.error('Database connection failed:', err.message));
+
 // Nueva sección: Sirve el archivo 'fronted' como la página principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'fronted.html'));
@@ -24,17 +27,36 @@ app.get('/', (req, res) => {
 
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
-    try {
+   try {
         const [users] = await db.query('SELECT * FROM usuarios WHERE username = ?', [username]);
         if (users.length === 0) {
-            return res.json({ success: false });
+            return res.status(401).json({ success: false, error: 'Usuario no encontrado' });
         }
         const user = users[0];
         const isMatch = await bcrypt.compare(password, user.password);
-        res.json({ success: isMatch });
+        if (!isMatch) {
+            return res.status(401).json({ success: false, error: 'Contraseña incorrecta' });
+        }
+        res.json({ success: true });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error en /api/login:', error.message, error.stack);
+        res.status(500).json({ error: 'Server error: ' + error.message });
+    }
+});
+
+app.post('/api/register', async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const [users] = await db.query('SELECT * FROM usuarios WHERE username = ?', [username]);
+        if (users.length > 0) {
+            return res.status(400).json({ success: false, error: 'El usuario ya existe' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await db.query('INSERT INTO usuarios (username, password) VALUES (?, ?)', [username, hashedPassword]);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error en /api/register:', error.message, error.stack);
+        res.status(500).json({ error: 'Server error: ' + error.message });
     }
 });
 
@@ -43,8 +65,8 @@ app.get('/api/lotes', async (req, res) => {
         const [lotes] = await db.query('SELECT * FROM lotes');
         res.json(lotes);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error en /api/lotes:', error.message, error.stack);
+        res.status(500).json({ error: 'Server error: ' + error.message });
     }
 });
 
