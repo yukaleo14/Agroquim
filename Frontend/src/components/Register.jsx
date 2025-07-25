@@ -27,7 +27,7 @@ export default function Register() {
   };
 
   return (
-    <div className="flex justify-center mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl font-bold mb-4 text-center">Registrar Nuevo Usuario</h2>
         <form onSubmit={handleRegister}>
@@ -59,6 +59,14 @@ export default function Register() {
           </button>
         </form>
         {message && <div className="mt-2 text-center text-sm">{message}</div>}
+        <div>
+            <button
+              onClick={() => navigate('/login')}
+              className="text-gray-700 hover:underline"
+            >
+              ¿Tienes una cuenta? Inicia sesión
+            </button>
+          </div>
       </div>
     </div>
   );

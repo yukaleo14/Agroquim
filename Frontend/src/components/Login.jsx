@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,6 +26,14 @@ export default function Login({ onLogin }) {
           </div>
           <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Ingresar</button>
         </form>
+        <div>
+            <button
+              onClick={() => navigate('/register')}
+              className="text-gray-700 hover:underline"
+            >
+              ¿No tienes una cuenta? Regístrate
+            </button>
+          </div>
       </div>
     </div>
   );
